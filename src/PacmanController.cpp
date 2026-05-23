@@ -9,6 +9,13 @@ PacmanController::~PacmanController() {
 	// TODO Auto-generated destructor stub
 }
 
+Move getOppositeDirection(Move m) {
+    if (m == UP) return DOWN;
+    if (m == DOWN) return UP;
+    if (m == LEFT) return RIGHT;
+    if (m == RIGHT) return LEFT;
+    return PASS;
+}
 
 Move PacmanController::getClosestMove(const GameState& game, std::pair<int,int> target)const{
 	int minDist=10000000;
@@ -69,6 +76,7 @@ PacmanController::getMove(const GameState& game){
 	
 	int pacmanNode = character->getPos();
 	auto pacmanCoords = game.getMaze().getNodePos(pacmanNode);
+	Move currentDir = character->getDirection();
 	
 	std::vector<std::pair<int,int>> ghostPositions;
 	for(int i=0;i<4;i++){
@@ -84,9 +92,9 @@ PacmanController::getMove(const GameState& game){
 
 
 	float fear=0.0f;
-	Move escapeMove=PASS;
+	Move escapeMove = PASS;
 	float hunger=0.0f;
-	Move eatGhostMove=PASS;
+	Move eatGhostMove = PASS;
 
 
 
@@ -114,9 +122,36 @@ PacmanController::getMove(const GameState& game){
 			}
 		}
 	}
-	//std::cout<<"fear="<<fear<<std::endl;
-	//std::cout<<"hunger="<<hunger<<std::endl;
-	if(fear>hunger)return escapeMove;
-	else return eatGhostMove;
-	
+
+	Move finalMove = PASS;
+
+	if(fear > hunger) {
+        finalMove = escapeMove;
+    } else if (hunger > 0.0f) {
+        finalMove = eatGhostMove;
+    }
+
+	//obliga a mantener la direccion elegida para evitar que oscile entre 2 o mas direcciones
+	Move oppositeDir = getOppositeDirection(currentDir);
+    if (finalMove == oppositeDir && fear < 0.85f) {
+        finalMove = PASS;
+    }
+
+	std::vector<Move> possibleMoves = game.getMaze().getPossibleMoves(pacmanNode);
+    if (possibleMoves.size() > 1) { // Es un pasillo continuo o una intersección ??
+        if (finalMove == oppositeDir) {
+            for (Move m : possibleMoves) {
+                if (m != oppositeDir && game.getMaze().getNeighbour(pacmanNode, m) >= 0) {
+                    finalMove = m; // Desvia a Pac-Man hacia un camino alternativo antes que retroceder
+                    break;
+                }
+            }
+        }
+    }
+
+	if (game.getMaze().getNeighbour(pacmanNode, finalMove) < 0 && !possibleMoves.empty()) {
+        finalMove = possibleMoves[0];
+    }
+
+    return finalMove;
 }
