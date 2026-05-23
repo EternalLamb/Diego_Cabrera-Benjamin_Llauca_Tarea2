@@ -33,22 +33,23 @@ SueController::getMove(const GameState& game){
 
 		std::vector<Move> possibleMoves = game.getMaze().getPossibleMoves(sueNode);
 		
-		for (move m : possibleMoves){
+		for (Move m : possibleMoves){
 
-			int vecino = game.getMaze().getNodePos(vecino);
-			int dist = getSqrDistance(vecinoCoords, pacmanCoords);
+			int vecino = game.getMaze().getNeighbour(sueNode, m);
+			if (vecino < 0) continue;
 
 			auto vecinoCoords = game.getMaze().getNodePos(vecino);
-            int dist = getSqDist(vecinoCoords, pacmanCoords);
+            int dist = getSqrDistance(vecinoCoords, pacmanCoords);
             if (dist > maxDist) {
                 maxDist = dist;
                 escapeMove = m;
+
+				return escapeMove;
             }
-        }
-        return escapeMove;
+        }   
 	}
 
-	auto powerPillPositions = game.getmaze().getPowerPillPositions();
+	auto powerPillPositions = game.getMaze().getPowerPillPositions();
 
 	int pacmanNode = game.getPacmanPos();
 	auto pacmanCoords = game.getMaze().getNodePos(pacmanNode);
@@ -56,15 +57,15 @@ SueController::getMove(const GameState& game){
 	if (powerPillPositions.empty())
 	{
 		int minDist = INT_MAX;
-		Move attacNove->character.getDirection();
-		std::vector<Move> possibleMoves = game.getmaze().getPossibleMoves(sueNode);
+		Move attackMove = character->getDirection();
+		std::vector<Move> possibleMoves = game.getMaze().getPossibleMoves(sueNode);
 
 		for (Move m : possibleMoves) {
             int vecino = game.getMaze().getNeighbour(sueNode, m);
             if (vecino < 0) continue;
             
             auto vecinoCoords = game.getMaze().getNodePos(vecino);
-            int dist = getSqDist(vecinoCoords, pacmanCoords);
+            int dist = getSqrDistance(vecinoCoords, pacmanCoords);
             if (dist < minDist) {
                 minDist = dist;
                 attackMove = m;
@@ -77,7 +78,7 @@ SueController::getMove(const GameState& game){
     int minPillDist = INT_MAX;
 
     for (const auto& pillPos : powerPillPositions) {
-        int dist = getSqDist(sueCoords, pillPos);
+        int dist = getSqrDistance(sueCoords, pillPos);
         if (dist < minPillDist) {
             minPillDist = dist;
             targetPill = pillPos;
@@ -107,7 +108,7 @@ SueController::getMove(const GameState& game){
         if (vecino < 0) continue;
         
         auto vecinoCoords = game.getMaze().getNodePos(vecino);
-        int dist = getSqDist(vecinoCoords, finalTarget);
+        int dist = getSqrDistance(vecinoCoords, finalTarget);
         
         if (dist < minDist) {
             minDist = dist;
