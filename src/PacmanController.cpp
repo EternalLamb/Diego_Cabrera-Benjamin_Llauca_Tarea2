@@ -90,13 +90,10 @@ PacmanController::getMove(const GameState& game){
 
 	auto powerPillPositions=game.getMaze().getPowerPillPositions();	
 
-
 	float fear=0.0f;
 	Move escapeMove = PASS;
 	float hunger=0.0f;
 	Move eatGhostMove = PASS;
-
-
 
 	//arrancar de fantasmas cercanos que me pueden comer 
 	for(int i=0;i<4;i++){
@@ -106,7 +103,7 @@ PacmanController::getMove(const GameState& game){
 			if(tempFear>fear){
 				fear=tempFear;
 				escapeMove=getFarthestMove(game,ghostPositions[i]);
-			}
+ 			}
 		}
 		
 	}
