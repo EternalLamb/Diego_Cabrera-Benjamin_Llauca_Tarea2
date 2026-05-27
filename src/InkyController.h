@@ -27,15 +27,15 @@ public:
     virtual Move getMove(const GameState& gs) override;
 };
 
-class PowerPill_Inky : public Behavior{
+class Powerpill_Inky : public Behavior{
 public:
     virtual Status update() override;
 };
-class OutOfRange_Inky : Behavior{
+class OutOfRange_Inky : public Behavior{
 public:
     static constexpr float RADIO = 40.0f;
     virtual Status update() override;
-}
+};
 class Frightened_Inky : public Behavior{
 public:
     virtual Status update() override;
