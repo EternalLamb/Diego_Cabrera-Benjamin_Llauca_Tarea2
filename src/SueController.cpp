@@ -43,10 +43,9 @@ SueController::getMove(const GameState& game){
             if (dist > maxDist) {
                 maxDist = dist;
                 escapeMove = m;
-
-				return escapeMove;
             }
-        }   
+        }
+        return escapeMove;   
 	}
 
 	auto powerPillPositions = game.getMaze().getPowerPillPositions();
